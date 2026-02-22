@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>flea-market</title>
+    <title>Time Card</title>
     <link rel="stylesheet" href="{{ asset('css/sanitize.css') }}">
     <link rel="stylesheet" href="{{ asset('css/app.css') }}">
     @yield('css')
@@ -18,8 +18,8 @@
     </a>
     <div class="actions">
         @auth
-        <a href="" class="action-link">勤怠</a>
-        <a href="" class="action-link">勤怠一覧</a>
+        <a href="{{ route('user.attendance.create') }}" class="action-link">勤怠</a>
+        <a href="{{ route('user.attendance.index') }}" class="action-link">勤怠一覧</a>
         <a href="" class="action-link">申請</a>
         <form method="POST" action="" class="logout-form">
             @csrf

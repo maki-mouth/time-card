@@ -13,4 +13,6 @@ use App\Http\Controllers\User\AttendanceController;
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::get('/attendance/list', [AttendanceController::class, 'index'])->name('attendance.index');
+Route::get('/attendance', [AttendanceController::class, 'create'])->name('user.attendance.create');
+Route::post('/attendance', [AttendanceController::class, 'punch'])->name('user.attendance.punch');
+Route::get('/attendance/list', [AttendanceController::class, 'index'])->name('user.attendance.index');

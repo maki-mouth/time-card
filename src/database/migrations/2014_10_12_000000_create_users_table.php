@@ -20,6 +20,7 @@ class CreateUsersTable extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
+            $table->string('role')->default('user'); // 追加: ユーザーロール（例: user, admin）
             $table->timestamps();
         });
     }

@@ -6,7 +6,7 @@
 
 @section('content')
 <div class="attendance-container">
-    <h2 class="page-title">勤怠一覧</h2>
+    <h1 class="page-title">勤怠一覧</h1>
 
     {{-- 月選択ナビゲーション --}}
     <div class="month-nav">
