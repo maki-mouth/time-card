@@ -29,17 +29,38 @@
                 </tr>
             </thead>
             <tbody>
-                {{-- 本来は @foreach($attendances as $attendance) でループさせます --}}
-                @for ($i = 1; $i <= 30; $i++)
-                <tr>
-                    <td>06/{{ sprintf('%02d', $i) }}(月)</td>
-                    <td>09:00</td>
-                    <td>18:00</td>
-                    <td>1:00</td>
-                    <td>8:00</td>
-                    <td><a href="#" class="detail-link">詳細</a></td>
-                </tr>
-                @endfor
+                @foreach($dates as $dateString => $data)
+                    @php
+                        $date = $data['date'];
+                        $attendance = $data['attendance'];
+                    @endphp
+                    <tr>
+                        {{-- 日付と曜日 --}}
+                        <td>{{ $date->format('m/d') }}({{ $date->isoFormat('ddd') }})</td>
+
+                        @if($attendance)
+                            {{-- データがある場合 --}}
+                            <td>{{ \Carbon\Carbon::parse($attendance->check_in)->format('H:i') }}</td>
+                            <td>{{ $attendance->check_out ? \Carbon\Carbon::parse($attendance->check_out)->format('H:i') : '' }}</td>
+                            <td>{{-- 休憩合計 --}}</td>
+                            <td>{{-- 実働時間 --}}</td>
+                            <td>
+                                {{-- 既存データのIDを渡す --}}
+                                <a href="{{ route('user.attendance.show', ['id' => $attendance->id]) }}" class="detail-link">詳細</a>
+                            </td>
+                        @else
+                            {{-- データがない日は空欄 --}}
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td>
+                                {{-- 記録がない日は、日付パラメータを渡して「新規申請」扱いにさせる --}}
+                                <a href="{{ route('user.attendance.show', ['date' => $dateString]) }}" class="detail-link">詳細</a>
+                            </td>
+                        @endif
+                    </tr>
+                @endforeach
             </tbody>
         </table>
     </div>

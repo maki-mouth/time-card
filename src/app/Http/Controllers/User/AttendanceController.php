@@ -11,9 +11,39 @@ use Illuminate\Support\Facades\Auth;
 
 class AttendanceController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view('user.attendance.index');
+        $user = auth()->user();
+
+        // 表示したい月を取得（指定がなければ今月）
+        $month = $request->input('month', now()->format('Y-m'));
+        $startOfMonth = \Carbon\Carbon::parse($month)->startOfMonth();
+        $endOfMonth = \Carbon\Carbon::parse($month)->endOfMonth();
+
+        // 1. その月の全日付を生成する
+        $dates = [];
+        for ($date = $startOfMonth->copy(); $date->lte($endOfMonth); $date->addDay()) {
+            $dates[$date->toDateString()] = [
+                'date' => $date->copy(),
+                'attendance' => null, // 初期値はデータなし
+            ];
+        }
+
+        // 2. DBからその月の打刻データを取得
+        $attendances = \App\Models\Attendance::with('breakTimes')
+            ->where('user_id', $user->id)
+            ->whereBetween('date', [$startOfMonth->toDateString(), $endOfMonth->toDateString()])
+            ->get()
+            ->keyBy('date'); // 日付をキーにする
+
+        // 3. 全日付データにDBのデータを流し込む
+        foreach ($attendances as $date => $attendance) {
+            if (isset($dates[$date])) {
+                $dates[$date]['attendance'] = $attendance;
+            }
+        }
+
+        return view('user.attendance.index', compact('dates', 'month'));
     }
 
     public function create()
@@ -99,5 +129,21 @@ class AttendanceController extends Controller
         }
 
         return redirect()->back()->with('success', $message ?? '打刻を記録しました。');
+    }
+
+    public function show(Request $request, $id = null)
+    {
+        // IDがある場合：既存のデータを取得
+        if ($id) {
+            $attendance = Attendance::with('breakTimes')->findOrFail($id);
+            $date = $attendance->date;
+        }
+        // IDがなく、日付パラメータがある場合：空のインスタンスを準備
+        else {
+            $date = $request->query('date');
+            $attendance = new Attendance(['date' => $date]);
+        }
+
+        return view('user.attendance.show', compact('attendance', 'date'));
     }
 }

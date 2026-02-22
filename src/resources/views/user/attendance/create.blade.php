@@ -23,7 +23,7 @@
         {{-- 日付と時刻 --}}
         <div class="datetime-display">
             <p class="date">{{ \Carbon\Carbon::now()->isoFormat('YYYY年M月D日(ddd)') }}</p>
-            <p class="time" id="current-time">08:00</p> {{-- JSで動かすのが一般的です --}}
+            <p class="time" id="current-time">00:00</p> {{-- JSで動かすのが一般的です --}}
         </div>
 
         {{-- 打刻ボタンエリア --}}
@@ -38,7 +38,7 @@
             @elseif(!$attendance->check_out)
                 {{-- 出勤中（休憩中を含む） --}}
                 @php $isBreaking = $attendance->breakTimes()->whereNull('end_time')->exists(); @endphp
-                
+
                 <div class="btn-group">
                     @if($isBreaking)
                         {{-- 休憩中 --}}
@@ -71,7 +71,7 @@
 <script>
     function updateClock() {
         const now = new Date();
-        const timeString = now.getHours().toString().padStart(2, '0') + ':' + 
+        const timeString = now.getHours().toString().padStart(2, '0') + ':' +
                            now.getMinutes().toString().padStart(2, '0');
         document.getElementById('current-time').textContent = timeString;
     }
