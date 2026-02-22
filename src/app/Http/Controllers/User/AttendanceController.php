@@ -15,35 +15,51 @@ class AttendanceController extends Controller
     {
         $user = auth()->user();
 
-        // 表示したい月を取得（指定がなければ今月）
+        // 1. 対象となる月を取得し、Carbonインスタンスを作成
         $month = $request->input('month', now()->format('Y-m'));
-        $startOfMonth = \Carbon\Carbon::parse($month)->startOfMonth();
-        $endOfMonth = \Carbon\Carbon::parse($month)->endOfMonth();
+        $currentDate = \Carbon\Carbon::parse($month);
 
-        // 1. その月の全日付を生成する
+        // 2. 前月・翌月のリンク用文字列を作成
+        $prevMonth = $currentDate->copy()->subMonth()->format('Y-m');
+        $nextMonth = $currentDate->copy()->addMonth()->format('Y-m');
+
+        // 3. 月の開始日と終了日を定義
+        $startOfMonth = $currentDate->copy()->startOfMonth();
+        $endOfMonth = $currentDate->copy()->endOfMonth();
+
+        // 4. その月の全日付をキーにした配列を生成（初期値はnull）
         $dates = [];
         for ($date = $startOfMonth->copy(); $date->lte($endOfMonth); $date->addDay()) {
             $dates[$date->toDateString()] = [
                 'date' => $date->copy(),
-                'attendance' => null, // 初期値はデータなし
+                'attendance' => null,
             ];
         }
 
-        // 2. DBからその月の打刻データを取得
+        // 5. DBから該当月の打刻データを一括取得（Eager Load: breakTimes）
         $attendances = \App\Models\Attendance::with('breakTimes')
             ->where('user_id', $user->id)
-            ->whereBetween('date', [$startOfMonth->toDateString(), $endOfMonth->toDateString()])
+            ->whereBetween('date', [
+                $startOfMonth->toDateString(),
+                $endOfMonth->toDateString()
+            ])
             ->get()
-            ->keyBy('date'); // 日付をキーにする
+            ->keyBy('date'); // 日付をキーにして検索しやすくする
 
-        // 3. 全日付データにDBのデータを流し込む
+        // 6. 生成した日付配列にDBのデータをマッピング
         foreach ($attendances as $date => $attendance) {
             if (isset($dates[$date])) {
                 $dates[$date]['attendance'] = $attendance;
             }
         }
 
-        return view('user.attendance.index', compact('dates', 'month'));
+        // 7. ビューに必要な変数をすべて渡す
+        return view('user.attendance.index', compact(
+            'dates',
+            'month',
+            'prevMonth',
+            'nextMonth'
+        ));
     }
 
     public function create()

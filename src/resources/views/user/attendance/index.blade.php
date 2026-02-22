@@ -10,11 +10,29 @@
 
     {{-- 月選択ナビゲーション --}}
     <div class="month-nav">
-        <a href="#" class="nav-arrow">← 前月</a>
-        <span class="current-month">2023/06</span>
-        <a href="#" class="nav-arrow">翌月 →</a>
-    </div>
+        {{-- 前月へのリンク --}}
+        <a href="{{ route('user.attendance.index', ['month' => $prevMonth]) }}" class="nav-arrow">← 前月</a>
 
+        {{-- カレンダー選択部分 --}}
+        <div class="month-picker-container">
+            {{-- カレンダーアイコン --}}
+            <label for="month-input" class="calendar-icon">
+                <img src="{{ asset('img/calendar.png') }}" alt="calendar"> {{-- 画像があれば --}}
+                {{-- アイコン画像がない場合は、Webフォントや 📅 等で代用可 --}}
+            </label>
+
+            {{-- 表示テキスト --}}
+            <span class="current-month">{{ \Carbon\Carbon::parse($month)->format('Y/m') }}</span>
+
+            {{-- 実際のカレンダー入力（透明にして重ねるか、JSで制御） --}}
+            <input type="month" id="month-input" class="month-hidden-input"
+                value="{{ $month }}"
+                onchange="location.href='{{ route('user.attendance.index') }}?month=' + this.value">
+        </div>
+
+        {{-- 翌月へのリンク --}}
+        <a href="{{ route('user.attendance.index', ['month' => $nextMonth]) }}" class="nav-arrow">翌月 →</a>
+    </div>
     {{-- 勤怠テーブル --}}
     <div class="table-wrapper">
         <table class="attendance-table">
