@@ -65,10 +65,10 @@ class AttendanceController extends Controller
     public function create()
     {
         // 【重要】テスト中のみ、無理やりログイン状態にする
-        if (!auth()->check()) {
+        //if (!auth()->check()) {
             // ID 1のユーザー（Seederで作った一人目）としてログイン
-            auth()->loginUsingId(1);
-        }
+            //auth()->loginUsingId(1);
+        //}
 
         $user = Auth::user();
         $today = Carbon::today()->toDateString();
@@ -89,10 +89,10 @@ class AttendanceController extends Controller
     {
         
     // 【重要】テスト中のみ、無理やりログイン状態にする
-        if (!auth()->check()) {
+        //if (!auth()->check()) {
             // ID 1のユーザー（Seederで作った一人目）としてログイン
-            auth()->loginUsingId(1);
-        }
+            //auth()->loginUsingId(1);
+        //}
 
         $user = Auth::user();
         $now = Carbon::now();

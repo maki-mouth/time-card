@@ -60,8 +60,8 @@
                             {{-- データがある場合 --}}
                             <td>{{ \Carbon\Carbon::parse($attendance->check_in)->format('H:i') }}</td>
                             <td>{{ $attendance->check_out ? \Carbon\Carbon::parse($attendance->check_out)->format('H:i') : '' }}</td>
-                            <td>{{-- 休憩合計 --}}</td>
-                            <td>{{-- 実働時間 --}}</td>
+                            <td>{{ $attendance->total_rest_time }}</td>
+                            <td>{{ $attendance->total_work_time }}</td>
                             <td>
                                 {{-- 既存データのIDを渡す --}}
                                 <a href="{{ route('user.attendance.show', ['id' => $attendance->id]) }}" class="detail-link">詳細</a>

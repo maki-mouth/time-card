@@ -21,7 +21,7 @@
         <a href="{{ route('user.attendance.create') }}" class="action-link">勤怠</a>
         <a href="{{ route('user.attendance.index') }}" class="action-link">勤怠一覧</a>
         <a href="" class="action-link">申請</a>
-        <form method="POST" action="" class="logout-form">
+        <form method="POST" action="{{ route('logout') }}" class="logout-form">
             @csrf
             <button type="submit" class="action-link-out">ログアウト</button>
         </form>
