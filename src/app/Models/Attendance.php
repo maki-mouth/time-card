@@ -73,4 +73,9 @@ class Attendance extends Model
         $minutes = $workMinutes % 60;
         return sprintf('%01d:%02d', $hours, $minutes);
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

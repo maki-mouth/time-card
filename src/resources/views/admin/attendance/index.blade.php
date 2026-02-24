@@ -5,56 +5,58 @@
 @endsection
 
 @section('content')
-<main class="main">
-    <h1 class="page-title">2023年6月1日の勤怠</h1>
+<main class="attendance-container">
+    <h1 class="page-title">{{ \Carbon\Carbon::parse($today)->format('Y年n月j日') }}の勤怠</h1>
+    {{-- 月選択ナビゲーション --}}
+    <div class="month-nav">
+        {{-- 前月へのリンク --}}
+        <a href="{{ route('admin.attendance.index', ['date' => $prevDate]) }}" class="nav-arrow">← 前日</a>
+        {{-- カレンダー選択部分 --}}
+        <div class="month-picker-container">
+            {{-- カレンダーアイコン --}}
+            <label for="month-input" class="calendar-icon">
+                <img src="{{ asset('img/calendar.png') }}" alt="calendar"> {{-- 画像があれば --}}
+            </label>
+                {{-- 表示テキスト --}}
+                <span class="current-month">{{ \Carbon\Carbon::parse($date)->format('Y/m/d') }}</span>
 
-    <div class="date-pager">
-        <a href="#" class="date-pager__btn">&larr; 前日</a>
-        <div class="date-pager__current">
-            <span class="calendar-icon">📅</span>
-            <span class="date-text">2023/06/01</span>
+            <input type="date" id="date-input" class="month-hidden-input"
+            value="{{ $date }}"
+            onchange="location.href='{{ route('admin.attendance.index') }}?date=' + this.value">
+
         </div>
-        <a href="#" class="date-pager__btn">翌日 &rarr;</a>
+        {{-- 翌月へのリンク --}}
+        <a href="{{ route('admin.attendance.index', ['date' => $nextDate]) }}" class="nav-arrow">翌日 →</a>
     </div>
-
-    <table class="attendance-table">
-        <thead>
-            <tr>
-                <th>名前</th>
-                <th>出勤</th>
-                <th>退勤</th>
-                <th>休憩</th>
-                <th>合計</th>
-                <th>詳細</th>
-            </tr>
-        </thead>
-        <tbody>
-            {{-- 将来的に @foreach でループさせる部分 --}}
-            <tr>
-                <td>山田 太郎</td>
-                <td>09:00</td>
-                <td>18:00</td>
-                <td>1:00</td>
-                <td>8:00</td>
-                <td><a href="#" class="detail-link">詳細</a></td>
-            </tr>
-            <tr>
-                <td>西 伶奈</td>
-                <td>09:00</td>
-                <td>18:00</td>
-                <td>1:00</td>
-                <td>8:00</td>
-                <td><a href="#" class="detail-link">詳細</a></td>
-            </tr>
-            <tr>
-                <td>増田 一世</td>
-                <td>09:00</td>
-                <td>18:00</td>
-                <td>1:00</td>
-                <td>8:00</td>
-                <td><a href="#" class="detail-link">詳細</a></td>
-            </tr>
-        </tbody>
-    </table>
+    
+    <div class="table-wrapper">
+        <table class="attendance-table">
+            <thead>
+                <tr>
+                    <th>名前</th>
+                    <th>出勤</th>
+                    <th>退勤</th>
+                    <th>休憩</th>
+                    <th>合計</th>
+                    <th>詳細</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($attendances as $attendance)
+                <tr>
+                    {{-- Userモデルとのリレーションで名前を表示 --}}
+                    <td>{{ $attendance->user->name }}</td>
+                    <td>{{ \Carbon\Carbon::parse($attendance->check_in)->format('H:i') }}</td>
+                    <td>
+                        {{ $attendance->check_out ? \Carbon\Carbon::parse($attendance->check_out)->format('H:i') : '-' }}
+                    </td>
+                    <td>{{ $attendance->total_rest_time }}</td>
+                    <td>{{ $attendance->total_work_time }}</td>
+                    <td><a href="#" class="detail-link">詳細</a></td>
+                </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
 </main>
 @endsection
