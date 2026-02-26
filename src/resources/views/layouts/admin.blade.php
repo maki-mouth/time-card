@@ -23,6 +23,7 @@
         <a href="" class="action-link">申請一覧</a>
         <form method="POST" action="{{ route('logout') }}" class="logout-form">
             @csrf
+            <input type="hidden" name="admin" value="1">
             <button type="submit" class="action-link-out">ログアウト</button>
         </form>
         @endauth

@@ -17,13 +17,13 @@ use Illuminate\Support\Facades\Auth;
 */
 // 一般ユーザー用ログイン画面
 Route::get('/login', function () {
-    return view('user.auth.login'); // resources/views/auth/login.blade.php
-})->name('login');
+    return view('user.auth.login');
+})->middleware('guest')->name('login'); // guestを追記
 
 // 管理者用ログイン画面
 Route::get('/admin/login', function () {
-    return view('admin.auth.login'); // resources/views/admin/login.blade.php
-})->name('admin.login');
+    return view('admin.auth.login');
+})->middleware('guest')->name('admin.login'); // guestを追記
 
 // ログイン済みユーザーのみアクセス可能なグループ
 Route::middleware(['auth'])->group(function () {
@@ -38,9 +38,13 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/attendance', [AttendanceController::class, 'punch'])->name('user.attendance.punch');
     Route::get('/attendance/list', [AttendanceController::class, 'index'])->name('user.attendance.index');
     Route::get('/attendance/detail/{id?}', [AttendanceController::class, 'show'])->name('user.attendance.show');
-});
-
-// 管理者専用ページ
-Route::get('/admin/attendance/list', [AdminAttendanceController::class, 'index'])
-    ->middleware(['auth', 'admin'])
+    
+    // 管理者専用ページ
+    Route::get('/admin/attendance/list', [AdminAttendanceController::class, 'index'])
+    ->middleware(['admin'])
     ->name('admin.attendance.index');
+
+    Route::get('/admin/attendance/{id}', [AdminAttendanceController::class, 'show'])
+    ->middleware(['admin'])
+    ->name('admin.attendance.show');
+});

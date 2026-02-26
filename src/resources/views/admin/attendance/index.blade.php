@@ -52,7 +52,7 @@
                     </td>
                     <td>{{ $attendance->total_rest_time }}</td>
                     <td>{{ $attendance->total_work_time }}</td>
-                    <td><a href="#" class="detail-link">詳細</a></td>
+                    <td><a href="{{ route('admin.attendance.show', ['id' => $attendance->id]) }}" class="detail-link">詳細</a></td>
                 </tr>
                 @endforeach
             </tbody>
