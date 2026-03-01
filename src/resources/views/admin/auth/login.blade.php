@@ -8,7 +8,7 @@
 <div class="login-container">
     <h2 class="login-title">管理者ログイン</h2>
 
-    <form class="login-form" action="/login" method="POST">
+    <form class="login-form" action="{{ route('login') }}" method="POST">
         @csrf
 
         {{-- メールアドレス --}}

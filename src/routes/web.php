@@ -27,10 +27,14 @@ Route::get('/admin/login', function () {
 
 // ログイン済みユーザーのみアクセス可能なグループ
 Route::middleware(['auth'])->group(function () {
-    
+
     // 振り分け
     Route::get('/dashboard', function () {
-        return Auth::user()->role === 'admin' ? redirect('/admin/attendance/list') : redirect('/attendance');
+        if (Auth::user()->role === 'admin') {
+                // 文字列ではなく、route() 関数を使って確実に飛ばす
+                return redirect()->route('admin.attendance.index');
+            }
+            return redirect()->route('user.attendance.create');
     });
 
     // 一般ユーザー向け勤怠ルート
@@ -38,7 +42,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/attendance', [AttendanceController::class, 'punch'])->name('user.attendance.punch');
     Route::get('/attendance/list', [AttendanceController::class, 'index'])->name('user.attendance.index');
     Route::get('/attendance/detail/{id?}', [AttendanceController::class, 'show'])->name('user.attendance.show');
-    
+
     // 管理者専用ページ
     Route::get('/admin/attendance/list', [AdminAttendanceController::class, 'index'])
     ->middleware(['admin'])

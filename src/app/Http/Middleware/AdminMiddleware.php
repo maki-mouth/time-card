@@ -23,7 +23,6 @@ class AdminMiddleware
             return $next($request); // 条件クリア！次の処理（ページ表示）へ進む
         }
 
-        // 条件に合わない場合はトップページへ強制送還
-        return redirect('/login');
+        return redirect('/attendance');
     }
 }
