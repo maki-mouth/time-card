@@ -71,7 +71,7 @@
                             <td></td>
                             <td>
                                 {{-- 記録がない日は、日付パラメータを渡して「新規申請」扱いにさせる --}}
-                                <a href="{{ route('user.attendance.show', ['date' => $dateString]) }}" class="detail-link">詳細</a>
+                                <a href="{{ route('user.attendance.show') }}?date={{ $date->format('Y-m-d') }}" class="detail-link">詳細</a>
                             </td>
                         @endif
                     </tr>

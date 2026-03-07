@@ -6,8 +6,10 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Attendance;
 use App\Models\BreakTime;
+use App\Models\Correction;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class AttendanceController extends Controller
 {
@@ -149,17 +151,90 @@ class AttendanceController extends Controller
 
     public function show(Request $request, $id = null)
     {
-        // IDがある場合：既存のデータを取得
+        // IDがある場合：既存のデータを取得（承認待ち申請も一緒に読み込む）
         if ($id) {
-            $attendance = Attendance::with('breakTimes')->findOrFail($id);
+            $attendance = Attendance::with(['breakTimes', 'corrections' => function($q) {
+                $q->where('status', 'pending');
+            }])->findOrFail($id);
+            
             $date = $attendance->date;
-        }
-        // IDがなく、日付パラメータがある場合：空のインスタンスを準備
+            
+            // 「statusがpendingの申請」が1件でもあれば true
+            $isPending = $attendance->corrections->isNotEmpty();
+        } 
+        // IDがない（新規作成など）場合
         else {
             $date = $request->query('date');
             $attendance = new Attendance(['date' => $date]);
+            $isPending = false; // 新規なので申請中はあり得ない
         }
 
-        return view('user.attendance.show', compact('attendance', 'date'));
+        // compactに 'isPending' を追加してViewに渡す
+        return view('user.attendance.show', compact('attendance', 'date', 'isPending'));
+    }
+/**
+     * 修正申請の保存処理
+     */
+    public function store(Request $request, $id = null)
+    {
+
+        // 1. $idが渡されていない、もしくはDBに存在しない場合の処理
+        $attendance = Attendance::find($id);
+
+        if (!$attendance) {
+            // IDがない場合は新規作成（記録がない日の申請）
+            $attendance = Attendance::create([
+                'user_id' => Auth::id(),
+                'date'    => $request->date, // hiddenで送られてくる日付
+            ]);
+            $id = $attendance->id;
+        }
+
+        // 2. バリデーション
+        $request->validate([
+            'check_in' => 'required|date_format:H:i',
+            'check_out' => 'required|date_format:H:i',
+            'reason' => 'required|string|max:255',
+            'breaks.*.start' => 'nullable|date_format:H:i',
+            'breaks.*.end' => 'nullable|date_format:H:i',
+        ]);
+
+        // 2. 現在の勤怠データ（修正前）を取得
+        $attendance = Attendance::with('breakTimes')->findOrFail($id);
+
+        // 3. オリジナルデータの作成（JSON用）
+        $originalData = [
+            'check_in' => $attendance->check_in ? \Carbon\Carbon::parse($attendance->check_in)->format('H:i') : null,
+            'check_out' => $attendance->check_out ? \Carbon\Carbon::parse($attendance->check_out)->format('H:i') : null,
+            'breaks' => $attendance->breakTimes->map(function($b) {
+                return [
+                    'start' => \Carbon\Carbon::parse($b->start_time)->format('H:i'),
+                    'end' => $b->end_time ? \Carbon\Carbon::parse($b->end_time)->format('H:i') : null,
+                ];
+            })->toArray(),
+        ];
+
+        // 4. 申請データ（修正後）の作成（JSON用）
+        $requestedData = [
+            'check_in' => $request->check_in,
+            'check_out' => $request->check_out,
+            'breaks' => array_filter($request->breaks ?? [], function($b) {
+                return !empty($b['start']); // 開始時間があるものだけ保存
+            }),
+        ];
+
+        // 5. 保存実行
+        DB::transaction(function () use ($attendance, $originalData, $requestedData, $request) {
+            Correction::create([
+                'user_id' => Auth::id(),
+                'attendance_id' => $attendance->id,
+                'status' => 'pending',
+                'original_data' => $originalData,
+                'requested_data' => $requestedData,
+                'reason' => $request->reason,
+            ]);
+        });
+
+        return redirect()->route('user.attendance.show', ['id' => $id]);
     }
 }

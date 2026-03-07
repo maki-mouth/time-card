@@ -112,3 +112,9 @@ textarea {
 .btn-update:hover {
     opacity: 0.8;
 }
+
+.pending-message {
+    color: rgba(255, 0, 0, 0.5);
+    font-weight: bold;
+    margin-right: 18px;
+}

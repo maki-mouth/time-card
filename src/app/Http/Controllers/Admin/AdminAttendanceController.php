@@ -40,7 +40,7 @@ class AdminAttendanceController extends Controller
             // 勤怠データをIDで取得（User情報も一緒に取得）
             $attendance = Attendance::with(['user', 'breakTimes'])->findOrFail($id);
             $date = $attendance->date;
-    
+
             return view('admin.attendance.show', compact('attendance', 'date'));
         }
 }

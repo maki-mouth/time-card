@@ -104,6 +104,8 @@
 
 .attendance-table tr:last-child td {
     border-bottom: none;
+    color: #888;
+    font-weight: bold;
 }
 
 /* 詳細リンク */

@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\User\AttendanceController;
 use App\Http\Controllers\Admin\AdminAttendanceController;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Controllers\Admin\AdminRequestController; // 追加
 
 /*
 |--------------------------------------------------------------------------
@@ -42,13 +43,15 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/attendance', [AttendanceController::class, 'punch'])->name('user.attendance.punch');
     Route::get('/attendance/list', [AttendanceController::class, 'index'])->name('user.attendance.index');
     Route::get('/attendance/detail/{id?}', [AttendanceController::class, 'show'])->name('user.attendance.show');
+    Route::post('/attendance/detail/{id?}', [AttendanceController::class, 'store'])->name('user.attendance.store');
 
-    // 管理者専用ページ
-    Route::get('/admin/attendance/list', [AdminAttendanceController::class, 'index'])
-    ->middleware(['admin'])
-    ->name('admin.attendance.index');
-
-    Route::get('/admin/attendance/{id}', [AdminAttendanceController::class, 'show'])
-    ->middleware(['admin'])
-    ->name('admin.attendance.show');
+    Route::middleware(['admin'])->group(function () {
+        Route::get('/admin/attendance/list', [AdminAttendanceController::class, 'index'])->name('admin.attendance.index');
+        Route::get('/admin/attendance/{id}', [AdminAttendanceController::class, 'show'])->name('admin.attendance.show');
+        
+        // 【追記】修正申請の一覧画面と承認処理（これから作成するもの）
+        Route::get('/stamp_correction_request/list', [AdminRequestController::class, 'index'])->name('admin.request.index');
+        Route::get('/stamp_correction_request/approve/{attendance_correct_request_id}', [AdminRequestController::class, 'show'])->name('admin.request.show');
+        Route::post('/stamp_correction_request/approve/{attendance_correct_request_id}', [AdminRequestController::class, 'approve'])->name('admin.request.approve');
+    });
 });
