@@ -17,6 +17,7 @@ class AttendanceController extends Controller
     {
         $user = auth()->user();
 
+        
         // 1. 対象となる月を取得し、Carbonインスタンスを作成
         $month = $request->input('month', now()->format('Y-m'));
         $currentDate = \Carbon\Carbon::parse($month);

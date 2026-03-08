@@ -1,0 +1,44 @@
+main {
+    max-width: 1400px;
+    margin: 100px auto;
+    text-align: center;
+    padding: 0 20px;
+}
+
+.message-box {
+    margin-bottom: 40px;
+}
+
+.message-box p {
+    font-size: 24px;
+    font-weight: bold;
+    color: #000000;
+    margin: 5px 0;
+}
+
+.instruction {
+    color: #000000;
+    font-size: 24px;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    padding: 10px 30px;
+    background-color: #d9d9d9;
+    border: 1px solid #000000;
+    border-radius: 10px;
+    margin-bottom: 30px;
+}
+
+.resend-button {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+    background: none;
+}
+
+.resend-button:hover {
+    text-decoration: underline;
+}

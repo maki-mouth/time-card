@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Attendance;
+use App\Models\User;
 use Carbon\Carbon;
 
 class AdminAttendanceController extends Controller
@@ -43,4 +44,34 @@ class AdminAttendanceController extends Controller
 
             return view('admin.attendance.show', compact('attendance', 'date'));
         }
+
+        /* 特定の日の勤怠詳細（新規・修正画面）を表示
+     * ※AdminAttendanceControllerにこの役割がある場合は、そちらに書いてもOKです
+     */
+    public function editDay(Request $request, $id)
+    {
+        if ($id === 'new') {
+            $attendance = new Attendance();
+            $attendance->user_id = $request->query('user_id');
+
+            // --- 修正箇所：URLの ?date=... から日付を取得 ---
+            $dateString = $request->query('date');
+            $attendance->date = $dateString;
+
+            // ビューで使う $date 変数を用意（Carbonインスタンスにすると扱いやすいです）
+            $date = \Carbon\Carbon::parse($dateString);
+
+            $user = User::findOrFail($attendance->user_id);
+        } else {
+            $attendance = Attendance::with('user', 'breakTimes')->findOrFail($id);
+            $user = $attendance->user;
+
+            // 既存データの日付をセット
+            $date = \Carbon\Carbon::parse($attendance->date);
+        }
+
+        // ビューに $date を追加して渡す
+        return view('admin.attendance.show', compact('attendance', 'user', 'date'));
+    }
 }
+

@@ -46,6 +46,11 @@ class FortifyServiceProvider extends ServiceProvider
             return view('user.auth.login');
         });
 
+        // メール認証待ち画面のパスを指定（Mailtrap連携時に必要）
+        Fortify::verifyEmailView(function () {
+            return view('user.auth.verify-email');
+        });
+
         Fortify::authenticateUsing(function ($request) {
             $user = User::where('email', $request->email)->first();
 

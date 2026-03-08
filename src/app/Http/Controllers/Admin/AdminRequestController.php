@@ -8,6 +8,7 @@ use App\Models\Correction;
 use App\Models\Attendance;
 use App\Models\BreakTime;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 
 
@@ -18,20 +19,30 @@ class AdminRequestController extends Controller
      */
     public function index(Request $request)
     {
-        // 1. タブの状態を取得（デフォルトは 'pending': 承認待ち）
+        $user = Auth::user();
+        // クエリパラメータからタブの状態を取得（承認待ち：pending / 承認済み：approved）
         $status = $request->query('status', 'pending');
 
-        // 2. 該当するステータスの申請データを取得
-        // user と attendance を Eager Load してクエリ回数を減らす
-        $corrections = Correction::with(['user', 'attendance'])
-            ->where('status', $status)
-            ->orderBy('created_at', 'desc')
-            ->get();
-
-        // 3. ビューに変数（corrections, status）を渡す
-        return view('admin.request.index', compact('corrections', 'status'));
+        if ($user->role === 'admin') {
+            // --- 👑 管理者の場合：全ユーザーの申請を取得 ---
+            $corrections = \App\Models\Correction::where('status', $status)
+                ->with(['user', 'attendance']) // リレーションをロード
+                ->orderBy('created_at', 'desc')
+                ->get();
+                
+            return view('admin.request.index', compact('corrections', 'status'));
+            
+        } else {
+            // --- 👤 一般ユーザーの場合：自分の申請のみ取得 ---
+            $corrections = \App\Models\Correction::where('user_id', $user->id)
+                ->where('status', $status)
+                ->with('attendance')
+                ->orderBy('created_at', 'desc')
+                ->get();
+                
+            return view('user.request.index', compact('corrections', 'status'));
+        }
     }
-
     /* 申請詳細（承認画面）の表示
      */
     public function show($id)
@@ -54,13 +65,13 @@ class AdminRequestController extends Controller
             $requested = $correction->requested_data;
             
             // 1. 対象の日付を取得（例: "2026-03-07"）
-            $date = $attendance->date; 
+            $date = $attendance->date;
 
             // 2. 日付と申請時刻を結合して、正しいフォーマットにする
             // Carbonを使って "2026-03-07 12:59:00" のような形式を生成します
             $checkInDateTime = \Carbon\Carbon::parse($date . ' ' . $requested['check_in'])->toDateTimeString();
-            $checkOutDateTime = $requested['check_out'] 
-                ? \Carbon\Carbon::parse($date . ' ' . $requested['check_out'])->toDateTimeString() 
+            $checkOutDateTime = $requested['check_out']
+                ? \Carbon\Carbon::parse($date . ' ' . $requested['check_out'])->toDateTimeString()
                 : null;
 
             // 3. 勤怠本体を更新
