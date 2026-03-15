@@ -17,16 +17,17 @@ class CreateCorrectionsTable extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('attendance_id')->constrained()->onDelete('cascade');
-            $table->string('status')->default('pending'); // pending(承認待ち), approved(承認済), rejected(却下)
-            $table->json('original_data'); // 修正前の出退勤・休憩データをJSONで保存
-            $table->json('requested_data'); // 修正後の出退勤・休憩データをJSONで保存
-            $table->text('reason'); // 申請理由
+            $table->string('status')->default('pending');
+            $table->json('original_data');
+            $table->json('requested_data');
+            $table->text('reason');
             $table->timestamps();
         });
     }
 
+
     /**
-     * 
+     *
      * Reverse the migrations.
      *
      * @return void

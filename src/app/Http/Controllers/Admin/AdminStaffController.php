@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Attendance;
@@ -72,5 +73,57 @@ class AdminStaffController extends Controller
             'prevMonth',
             'nextMonth'
         ));
+    }
+
+    public function export(Request $request, $user_id)
+    {
+        // 1. 対象スタッフの確認
+        $user = User::findOrFail($user_id);
+        
+        // 2. 対象月の取得（デフォルトは当月）
+        $month = $request->input('month', now()->format('Y-m'));
+        $startOfMonth = Carbon::parse($month)->startOfMonth();
+        $endOfMonth = Carbon::parse($month)->endOfMonth();
+
+        // 3. 勤怠データの取得
+        $attendances = Attendance::with('breakTimes')
+            ->where('user_id', $user->id)
+            ->whereBetween('date', [$startOfMonth, $endOfMonth])
+            ->orderBy('date', 'asc')
+            ->get();
+
+        // 4. CSV生成
+        return new StreamedResponse(function () use ($user, $attendances, $month) {
+            $handle = fopen('php://output', 'w');
+            fwrite($handle, "\xEF\xBB\xBF"); // BOM付与（Excel文字化け対策）
+
+            // ヘッダー（スタッフ名や対象月を先頭に入れると親切です）
+            fputcsv($handle, ['スタッフ名', $user->name]);
+            fputcsv($handle, ['対象月', $month]);
+            fputcsv($handle, []); // 空行
+            fputcsv($handle, ['日付', '出勤時間', '退勤時間', '休憩合計時間']);
+
+            foreach ($attendances as $attendance) {
+                // 休憩時間の合計（秒単位で集計してH:i形式にする例）
+                $totalBreakSeconds = $attendance->breakTimes->sum(function($break) {
+                    if ($break->start_time && $break->end_time) {
+                        return Carbon::parse($break->start_time)->diffInSeconds(Carbon::parse($break->end_time));
+                    }
+                    return 0;
+                });
+                $breakTimeStr = gmdate('H:i', $totalBreakSeconds);
+
+                fputcsv($handle, [
+                    $attendance->date,
+                    $attendance->check_in ? Carbon::parse($attendance->check_in)->format('H:i') : '',
+                    $attendance->check_out ? Carbon::parse($attendance->check_out)->format('H:i') : '',
+                    $breakTimeStr,
+                ]);
+            }
+            fclose($handle);
+        }, 200, [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $user->name . '_' . $month . '.csv"',
+        ]);
     }
 }

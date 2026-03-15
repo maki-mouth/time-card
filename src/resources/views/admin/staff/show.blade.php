@@ -79,6 +79,11 @@
             </tbody>
         </table>
     </div>
+    <div class="actions">
+        <a href="{{ route('admin.staff.export', ['id' => $user->id, 'month' => $month]) }}" class="btn-csv">
+            CSV出力
+        </a>
+    </div>
 </div>
 
 @endsection

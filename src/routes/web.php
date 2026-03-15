@@ -60,6 +60,7 @@ Route::middleware(['auth'])->group(function () {
         
         Route::get('/admin/staff/list', [AdminStaffController::class, 'index'])->name('admin.staff.index');
         Route::get('/admin/attendance/staff/{id}', [AdminStaffController::class, 'show'])->name('admin.staff.attendance');
+        Route::get('/admin/attendance/staff/{id}/export', [AdminStaffController::class, 'export'])->name('admin.staff.export');
     });
 });
 
