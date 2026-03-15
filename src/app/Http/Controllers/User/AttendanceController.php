@@ -10,6 +10,7 @@ use App\Models\Correction;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Http\Requests\AttendanceUpdateRequest;
 
 class AttendanceController extends Controller
 {
@@ -176,11 +177,11 @@ class AttendanceController extends Controller
 /**
      * 修正申請の保存処理
      */
-    public function store(Request $request, $id = null)
+    public function store(AttendanceUpdateRequest $request, $id = null)
     {
 
         // 1. $idが渡されていない、もしくはDBに存在しない場合の処理
-        $attendance = Attendance::find($id);
+        $attendance = Attendance::with('breakTimes')->find($id);
 
         if (!$attendance) {
             // IDがない場合は新規作成（記録がない日の申請）
@@ -190,15 +191,6 @@ class AttendanceController extends Controller
             ]);
             $id = $attendance->id;
         }
-
-        // 2. バリデーション
-        $request->validate([
-            'check_in' => 'required|date_format:H:i',
-            'check_out' => 'required|date_format:H:i',
-            'reason' => 'required|string|max:255',
-            'breaks.*.start' => 'nullable|date_format:H:i',
-            'breaks.*.end' => 'nullable|date_format:H:i',
-        ]);
 
         // 2. 現在の勤怠データ（修正前）を取得
         $attendance = Attendance::with('breakTimes')->findOrFail($id);

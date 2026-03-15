@@ -118,3 +118,10 @@ textarea {
     font-weight: bold;
     margin-right: 18px;
 }
+
+/* エラーメッセージ */
+.error-message {
+    color: #ff0000;
+    font-size: 14px;
+    margin-top: 5px;
+}

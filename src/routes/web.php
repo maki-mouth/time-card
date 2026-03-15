@@ -15,9 +15,6 @@ use Illuminate\Http\Request;
 |--------------------------------------------------------------------------
 */
 
-// 1. Laravel標準の認証ルートを有効化（メール認証機能をONにする）
-// すでに別の場所で Auth::routes() を書いている場合は、verify => true を追記してください
-//Auth::routes(['verify' => true]);
 
 // 一般ユーザー用ログイン画面
 Route::get('/login', function () {

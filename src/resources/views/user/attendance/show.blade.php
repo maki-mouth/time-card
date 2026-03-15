@@ -51,6 +51,8 @@
                             <input type="text" name="check_out" value="{{ old('check_out', $attendance->check_out ? \Carbon\Carbon::parse($attendance->check_out)->format('H:i') : '') }}">
                         @endif
                     </div>
+                    @error('check_in') <p class="error-message">{{ $message }}</p> @enderror
+                    @error('check_out') <p class="error-message">{{ $message }}</p> @enderror
                 </div>
             </div>
 
@@ -66,7 +68,7 @@
                     <div class="content">
                         <div class="input-group">
                             @php $break = $attendance->breakTimes[$i] ?? null; @endphp
-                            
+
                             @if($isPending)
                                 {{-- 承認待ち：テキスト表示 --}}
                                 <span>{{ $break ? \Carbon\Carbon::parse($break->start_time)->format('H:i') : '' }}</span>
@@ -82,6 +84,8 @@
                                 <input type="text" name="breaks[{{ $i }}][end]" value="{{ ($break && $break->end_time) ? \Carbon\Carbon::parse($break->end_time)->format('H:i') : '' }}">
                             @endif
                         </div>
+                        @error("breaks.$i.start") <p class="error-message">{{ $message }}</p> @enderror
+                        @error("breaks.$i.end") <p class="error-message">{{ $message }}</p> @enderror
                     </div>
                 </div>
             @endfor
@@ -97,6 +101,7 @@
                         {{-- 通常時：テキストエリア --}}
                         <textarea name="reason" rows="3">{{ old('reason', $attendance->correction->reason ?? '') }}</textarea>
                     @endif
+                    @error('reason') <p class="error-message">{{ $message }}</p> @enderror
                 </div>
             </div>
         </div>
