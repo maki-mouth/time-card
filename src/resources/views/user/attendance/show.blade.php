@@ -79,9 +79,9 @@
                                 @if($break)
                                     <input type="hidden" name="breaks[{{ $i }}][id]" value="{{ $break->id }}">
                                 @endif
-                                <input type="text" name="breaks[{{ $i }}][start]" value="{{ $break ? \Carbon\Carbon::parse($break->start_time)->format('H:i') : '' }}">
+                                <input type="text" name="breaks[{{ $i }}][start]" value="{{ old("breaks.$i.start", $break ? \Carbon\Carbon::parse($break->start_time)->format('H:i') : '') }}">
                                 <span class="separator">〜</span>
-                                <input type="text" name="breaks[{{ $i }}][end]" value="{{ ($break && $break->end_time) ? \Carbon\Carbon::parse($break->end_time)->format('H:i') : '' }}">
+                                <input type="text" name="breaks[{{ $i }}][end]" value="{{ old("breaks.$i.end", ($break && $break->end_time) ? \Carbon\Carbon::parse($break->end_time)->format('H:i') : '') }}">
                             @endif
                         </div>
                         @error("breaks.$i.start") <p class="error-message">{{ $message }}</p> @enderror

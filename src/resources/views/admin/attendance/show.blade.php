@@ -8,8 +8,13 @@
 <div class="attendance-container">
     <h1 class="section-title">勤怠詳細</h1>
 
-    <form action="" method="POST">
+    <form action="{{ route('admin.attendance.update', ['id' => $attendance->id]) }}" method="POST">
         @csrf
+        @method('POST')
+        {{-- $idがない時のために日付を送る --}}
+        @if(!$attendance->id)
+            <input type="hidden" name="date" value="{{ $date }}">
+        @endif
         <div class="detail-card">
             {{-- 名前 --}}
             <div class="detail-row">
@@ -35,55 +40,79 @@
                 <label class="label">出勤・退勤</label>
                 <div class="content">
                     <div class="input-group">
-                        <input type="text" name="check_in" value="{{ old('check_in', $attendance->check_in ? \Carbon\Carbon::parse($attendance->check_in)->format('H:i') : '') }}">
-                        <span class="separator">〜</span>
-                        <input type="text" name="check_out" value="{{ old('check_out', $attendance->check_out ? \Carbon\Carbon::parse($attendance->check_out)->format('H:i') : '') }}">
-                    </div>
-                </div>
-            </div>
-
-        {{-- 休憩時間の表示ロジック --}}
-        @php
-            $breakCount = count($attendance->breakTimes);
-            $displayCount = $breakCount + 1;
-        @endphp
-
-        @for ($i = 0; $i < $displayCount; $i++)
-            <div class="detail-row">
-                <label class="label">休憩{{ $i > 0 ? $i + 1 : '' }}</label>
-                <div class="content">
-                    <div class="input-group">
-                        @php
-                            $break = $attendance->breakTimes[$i] ?? null;
-                        @endphp
-
-                        @if($break)
-                            <input type="hidden" name="breaks[{{ $i }}][id]" value="{{ $break->id }}">
+                        @if($isPending)
+                            {{-- 承認待ち：テキスト表示 --}}
+                            <span>{{ $attendance->check_in ? \Carbon\Carbon::parse($attendance->check_in)->format('H:i') : '' }}</span>
+                            <span class="separator">〜</span>
+                            <span>{{ $attendance->check_out ? \Carbon\Carbon::parse($attendance->check_out)->format('H:i') : '' }}</span>
+                        @else
+                            {{-- 通常時：入力フォーム --}}
+                            <input type="text" name="check_in" value="{{ old('check_in', $attendance->check_in ? \Carbon\Carbon::parse($attendance->check_in)->format('H:i') : '') }}">
+                            <span class="separator">〜</span>
+                            <input type="text" name="check_out" value="{{ old('check_out', $attendance->check_out ? \Carbon\Carbon::parse($attendance->check_out)->format('H:i') : '') }}">
                         @endif
-
-                        <input type="text"
-                            name="breaks[{{ $i }}][start]"
-                            value="{{ $break ? \Carbon\Carbon::parse($break->start_time)->format('H:i') : '' }}">
-                        <span class="separator">〜</span>
-                        <input type="text" 
-                            name="breaks[{{ $i }}][end]" 
-                            value="{{ ($break && $break->end_time) ? \Carbon\Carbon::parse($break->end_time)->format('H:i') : '' }}">
                     </div>
+                    @error('check_in') <p class="error-message">{{ $message }}</p> @enderror
+                    @error('check_out') <p class="error-message">{{ $message }}</p> @enderror
                 </div>
             </div>
-        @endfor
+
+            {{-- 休憩時間 --}}
+            @php
+                $breakCount = count($attendance->breakTimes);
+                $displayCount = $breakCount + 1;
+            @endphp
+
+            @for ($i = 0; $i < $displayCount; $i++)
+                <div class="detail-row">
+                    <label class="label">休憩{{ $i > 0 ? $i + 1 : '' }}</label>
+                    <div class="content">
+                        <div class="input-group">
+                            @php $break = $attendance->breakTimes[$i] ?? null; @endphp
+
+                            @if($isPending)
+                                {{-- 承認待ち：テキスト表示 --}}
+                                <span>{{ $break ? \Carbon\Carbon::parse($break->start_time)->format('H:i') : '' }}</span>
+                                <span class="separator">〜</span>
+                                <span>{{ ($break && $break->end_time) ? \Carbon\Carbon::parse($break->end_time)->format('H:i') : '' }}</span>
+                            @else
+                                {{-- 通常時：入力フォーム --}}
+                                @if($break)
+                                    <input type="hidden" name="breaks[{{ $i }}][id]" value="{{ $break->id }}">
+                                @endif
+                                <input type="text" name="breaks[{{ $i }}][start]" value="{{ $break ? \Carbon\Carbon::parse($break->start_time)->format('H:i') : '' }}">
+                                <span class="separator">〜</span>
+                                <input type="text" name="breaks[{{ $i }}][end]" value="{{ ($break && $break->end_time) ? \Carbon\Carbon::parse($break->end_time)->format('H:i') : '' }}">
+                            @endif
+                        </div>
+                        @error("breaks.$i.start") <p class="error-message">{{ $message }}</p> @enderror
+                        @error("breaks.$i.end") <p class="error-message">{{ $message }}</p> @enderror
+                    </div>
+                </div>
+            @endfor
 
             {{-- 備考 --}}
             <div class="detail-row no-border">
                 <label class="label">備考</label>
                 <div class="content">
-                    <textarea name="reason" rows="3">{{ old('reason', $attendance->correction->reason ?? '') }}</textarea>
+                    @if($isPending)
+                        {{-- 承認待ち：テキスト表示 --}}
+                        <div class="note-display">{{ $attendance->corrections->first()->reason ?? '' }}</div>
+                    @else
+                        {{-- 通常時：テキストエリア --}}
+                        <textarea name="reason" rows="3">{{ old('reason', $attendance->reason) }}</textarea>
+                    @endif
+                    @error('reason') <p class="error-message">{{ $message }}</p> @enderror
                 </div>
             </div>
         </div>
 
         <div class="form-actions">
-            <button type="submit" class="btn-update">修正</button>
+            @if($isPending)
+                <p class="pending-message">*承認待ちのため修正はできません。</p>
+            @else
+                <button type="submit" class="btn-update">修正</button>
+            @endif
         </div>
     </form>
 </div>

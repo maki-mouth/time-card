@@ -37,6 +37,7 @@ Route::middleware(['auth'])->group(function () {
         return redirect()->route('user.attendance.create');
     });
 
+
     // 申請一覧（管理者・ユーザー共通）
     Route::get('/stamp_correction_request/list', [AdminRequestController::class, 'index'])->name('admin.request.index');
 
@@ -54,10 +55,11 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/admin/attendance/list', [AdminAttendanceController::class, 'index'])->name('admin.attendance.index');
         Route::get('/admin/attendance/{id}', [AdminAttendanceController::class, 'show'])->name('admin.attendance.show');
         Route::get('/admin/attendance/edit/{id}', [AdminAttendanceController::class, 'editDay'])->name('admin.attendance.detail');
+        Route::post('/admin/attendance/edit/{id}', [AdminAttendanceController::class, 'updateDay'])->name('admin.attendance.update');
         
         Route::get('/stamp_correction_request/approve/{attendance_correct_request_id}', [AdminRequestController::class, 'show'])->name('admin.request.show');
         Route::post('/stamp_correction_request/approve/{attendance_correct_request_id}', [AdminRequestController::class, 'approve'])->name('admin.request.approve');
-        
+
         Route::get('/admin/staff/list', [AdminStaffController::class, 'index'])->name('admin.staff.index');
         Route::get('/admin/attendance/staff/{id}', [AdminStaffController::class, 'show'])->name('admin.staff.attendance');
         Route::get('/admin/attendance/staff/{id}/export', [AdminStaffController::class, 'export'])->name('admin.staff.export');
