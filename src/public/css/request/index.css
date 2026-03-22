@@ -73,7 +73,8 @@
 .request-table td {
     padding: 15px;
     border-bottom: 1px solid #eee;
-    font-size: 15px;
+    color: #888;
+    font-weight: bold;
 }
 
 .request-table tr:last-child td {

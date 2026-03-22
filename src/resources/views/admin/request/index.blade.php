@@ -38,7 +38,7 @@
                     <td>{{ $correction->reason }}</td>
                     <td>{{ $correction->created_at->format('Y/m/d') }}</td>
                     <td>
-                        <a href="{{ route('admin.request.index', ['attendance_correct_request_id' => $correction->id]) }}" class="detail-link">詳細</a>
+                        <a href="{{ route('admin.request.approve', ['attendance_correct_request_id' => $correction->id]) }}" class="detail-link">詳細</a>
                     </td>
                 </tr>
                 @endforeach

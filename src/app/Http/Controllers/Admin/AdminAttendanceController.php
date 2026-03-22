@@ -107,6 +107,7 @@ class AdminAttendanceController extends Controller
         $attendance->check_in = $date . ' ' . $validated['check_in'];
         $attendance->check_out = $date . ' ' . $validated['check_out'];
         $attendance->reason = $validated['reason'] ?? null;
+        
 
         DB::transaction(function () use ($attendance, $validated) {
             // 5. 勤怠本体を保存
