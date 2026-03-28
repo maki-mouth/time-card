@@ -40,14 +40,12 @@
     font-size: 15px;
 }
 
-/* 最後の行の線は消す */
 .staff-table tr:last-child td {
     border-bottom: none;
     color: #888;
     font-weight: bold;
 }
 
-/* 詳細リンクのスタイル */
 .detail-link {
     color: #000;
     text-decoration: none;

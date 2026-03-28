@@ -43,7 +43,6 @@
     font-size: 18px;
 }
 
-/* 文字の表示（入力不可のため margin などを調整） */
 .name-display,
 .time-display,
 .reason-display {
@@ -54,7 +53,6 @@
     letter-spacing: 0.2em;
 }
 
-/* 日付の表示 */
 .date-display {
     display: flex;
     align-items: center;
@@ -62,7 +60,6 @@
     margin: 0 20px;
 }
 
-/* 時間表示グループ */
 .input-group {
     width: 100%;
     display: flex;
@@ -74,14 +71,12 @@
     font-weight: bold;
 }
 
-/* ボタンエリア */
 .form-actions {
     margin-top: 30px;
     display: flex;
     justify-content: flex-end;
 }
 
-/* 承認ボタン（黒ベース） */
 .btn-approve {
     background: #000;
     color: #fff;
@@ -98,10 +93,8 @@
     opacity: 0.8;
 }
 
-/* 承認済みボタン（グレー） */
 .btn-approved {
     background-color: #888;
-    /* 無効化されている雰囲気のグレー */
     color: #fff;
     border: none;
     padding: 12px 60px;

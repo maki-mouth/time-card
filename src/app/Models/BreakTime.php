@@ -16,9 +16,6 @@ class BreakTime extends Model
         'end_time',
     ];
 
-    /**
-     * 休憩時間に紐づく勤怠を取得
-     */
     public function attendance()
     {
         return $this->belongsTo(Attendance::class);

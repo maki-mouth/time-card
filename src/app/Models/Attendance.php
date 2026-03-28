@@ -15,17 +15,12 @@ class Attendance extends Model
         'check_in',
         'check_out',
     ];
-    /**
-     * 勤怠に紐づく休憩時間を取得
-     */
+
     public function breakTimes()
     {
         return $this->hasMany(BreakTime::class);
     }
 
-    /**
-     * 勤怠に紐づく修正申請を取得
-     */
     public function corrections()
     {
         return $this->hasMany(Correction::class);
@@ -42,7 +37,6 @@ class Attendance extends Model
             }
         }
 
-        // 分を H:i 形式に変換
         $hours = floor($totalMinutes / 60);
         $minutes = $totalMinutes % 60;
         return sprintf('%01d:%02d', $hours, $minutes);
@@ -57,10 +51,8 @@ class Attendance extends Model
         $start = \Carbon\Carbon::parse($this->check_in);
         $end = \Carbon\Carbon::parse($this->check_out);
 
-        // 滞在時間（分）
         $stayMinutes = $start->diffInMinutes($end);
 
-        // 休憩時間（分）を再計算
         $restMinutes = 0;
         foreach ($this->breakTimes as $break) {
             if ($break->start_time && $break->end_time) {
@@ -69,7 +61,6 @@ class Attendance extends Model
             }
         }
 
-        // 実働時間 = 滞在時間 - 休憩時間
         $workMinutes = $stayMinutes - $restMinutes;
 
         $hours = floor($workMinutes / 60);

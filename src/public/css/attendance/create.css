@@ -1,10 +1,8 @@
-/* 画面中央に配置するためのラッパー */
 .attendance-wrapper {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: calc(100vh - 80px);
-    /* ヘッダー分を引いた高さ */
     background-color: #f7f7f7;
 }
 
@@ -14,7 +12,6 @@
     max-width: 500px;
 }
 
-/* 状態バッジ */
 .status-group {
     margin-bottom: 20px;
 }
@@ -28,7 +25,6 @@
     font-weight: bold;
 }
 
-/* 日時表示 */
 .datetime-display {
     margin-bottom: 40px;
 }
@@ -45,7 +41,6 @@
     margin: 0;
 }
 
-/* ボタンの共通スタイル */
 .btn-group {
     display: flex;
     justify-content: center;

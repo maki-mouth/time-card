@@ -20,22 +20,17 @@ class Correction extends Model
     ];
 
     protected $casts = [
-        'original_data' => 'array', // JSONを配列として扱う
-        'requested_data' => 'array', // JSONを配列として扱う
+        'original_data' => 'array',
+        'requested_data' => 'array',
     ];
 
-    /**
-     * この申請を紐付けたユーザーを取得
-     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * この申請の対象となる勤怠データを取得
-     */
     public function attendance(): BelongsTo
     {
         return $this->belongsTo(Attendance::class);
-    }}
+    }
+}

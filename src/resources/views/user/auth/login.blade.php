@@ -6,11 +6,9 @@
 
 @section('content')
 <div class="login-container">
-    <h2 class="login-title">ログイン</h2>
-
+    <h1 class="login-title">ログイン</h1>
     <form class="login-form" action="/login" method="POST">
         @csrf
-
         {{-- メールアドレス --}}
         <div class="form-group">
             <label for="email">メールアドレス</label>
@@ -19,7 +17,6 @@
                 <p class="error-message">{{ $message }}</p>
             @enderror
         </div>
-
         {{-- パスワード --}}
         <div class="form-group">
             <label for="password">パスワード</label>
@@ -28,13 +25,11 @@
                 <p class="error-message">{{ $message }}</p>
             @enderror
         </div>
-
         {{-- ログインボタン --}}
         <div class="form-actions">
             <button type="submit" class="btn-login">ログインする</button>
         </div>
     </form>
-
     {{-- 会員登録リンク --}}
     <div class="register-link">
         <a href="/register">会員登録はこちら</a>

@@ -6,11 +6,9 @@
 
 @section('content')
 <div class="login-container">
-    <h2 class="login-title">管理者ログイン</h2>
-
+    <h1 class="login-title">管理者ログイン</h1>
     <form class="login-form" action="{{ route('login') }}" method="POST">
         @csrf
-
         {{-- メールアドレス --}}
         <div class="form-group">
             <label for="email">メールアドレス</label>
@@ -19,7 +17,6 @@
                 <p class="error-message">{{ $message }}</p>
             @enderror
         </div>
-
         {{-- パスワード --}}
         <div class="form-group">
             <label for="password">パスワード</label>
@@ -28,7 +25,6 @@
                 <p class="error-message">{{ $message }}</p>
             @enderror
         </div>
-
         {{-- ログインボタン --}}
         <div class="form-actions">
             <button type="submit" class="btn-login">管理者ログインする</button>

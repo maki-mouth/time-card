@@ -19,13 +19,11 @@
                 <span class="status-badge">出勤中</span>
             @endif
         </div>
-
         {{-- 日付と時刻 --}}
         <div class="datetime-display">
             <p class="date">{{ \Carbon\Carbon::now()->isoFormat('YYYY年M月D日(ddd)') }}</p>
-            <p class="time" id="current-time">00:00</p> {{-- JSで動かすのが一般的です --}}
+            <p class="time" id="current-time">00:00</p>
         </div>
-
         {{-- 打刻ボタンエリア --}}
         <div class="button-area">
             @if(!$attendance || !$attendance->check_in)
@@ -34,11 +32,9 @@
                     @csrf
                     <button type="submit" name="type" value="check_in" class="btn btn-black">出勤</button>
                 </form>
-
             @elseif(!$attendance->check_out)
                 {{-- 出勤中（休憩中を含む） --}}
                 @php $isBreaking = $attendance->breakTimes()->whereNull('end_time')->exists(); @endphp
-
                 <div class="btn-group">
                     @if($isBreaking)
                         {{-- 休憩中 --}}
@@ -58,7 +54,6 @@
                         </form>
                     @endif
                 </div>
-
             @else
                 {{-- 退勤後 --}}
                 <p class="finish-message">お疲れ様でした。</p>
@@ -66,13 +61,11 @@
         </div>
     </div>
 </div>
-
-{{-- リアルタイムで時計を動かすための簡易スクリプト（お好みで） --}}
 <script>
     function updateClock() {
         const now = new Date();
         const timeString = now.getHours().toString().padStart(2, '0') + ':' +
-                           now.getMinutes().toString().padStart(2, '0');
+                            now.getMinutes().toString().padStart(2, '0');
         document.getElementById('current-time').textContent = timeString;
     }
     setInterval(updateClock, 1000);

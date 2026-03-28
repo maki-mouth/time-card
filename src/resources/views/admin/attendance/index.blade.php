@@ -15,7 +15,7 @@
         <div class="month-picker-container">
             {{-- カレンダーアイコン --}}
             <label for="month-input" class="calendar-icon">
-                <img src="{{ asset('img/calendar.png') }}" alt="calendar"> {{-- 画像があれば --}}
+                <img src="{{ asset('img/calendar.png') }}" alt="calendar">
             </label>
                 {{-- 表示テキスト --}}
                 <span class="current-month">{{ \Carbon\Carbon::parse($date)->format('Y/m/d') }}</span>
@@ -28,7 +28,6 @@
         {{-- 翌月へのリンク --}}
         <a href="{{ route('admin.attendance.index', ['date' => $nextDate]) }}" class="nav-arrow">翌日 →</a>
     </div>
-    
     <div class="table-wrapper">
         <table class="attendance-table">
             <thead>

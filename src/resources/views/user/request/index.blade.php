@@ -7,7 +7,6 @@
 @section('content')
 <div class="request-container">
     <h1 class="page-title">申請一覧</h1>
-
     {{-- タブメニュー --}}
     <div class="tabs">
         <a href="{{ route('admin.request.index', ['status' => 'pending']) }}"
@@ -15,7 +14,6 @@
         <a href="{{ route('admin.request.index', ['status' => 'approved']) }}"
             class="tab-item {{ $status === 'approved' ? 'active' : '' }}">承認済み</a>
     </div>
-
     {{-- 申請一覧テーブル --}}
     <div class="table-wrapper">
         <table class="request-table">

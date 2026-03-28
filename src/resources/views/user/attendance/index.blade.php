@@ -7,7 +7,6 @@
 @section('content')
 <div class="attendance-container">
     <h1 class="page-title">勤怠一覧</h1>
-
     {{-- 月選択ナビゲーション --}}
     <div class="month-nav">
         {{-- 前月へのリンク --}}
@@ -16,12 +15,10 @@
         <div class="month-picker-container">
             {{-- カレンダーアイコン --}}
             <label for="month-input" class="calendar-icon">
-                <img src="{{ asset('img/calendar.png') }}" alt="calendar"> {{-- 画像があれば --}}
+                <img src="{{ asset('img/calendar.png') }}" alt="calendar">
             </label>
-
             {{-- 表示テキスト --}}
             <span class="current-month">{{ \Carbon\Carbon::parse($month)->format('Y/m') }}</span>
-
             {{-- 実際のカレンダー入力（透明にして重ねるか、JSで制御） --}}
             <input type="month" id="month-input" class="month-hidden-input"
                 value="{{ $month }}"
@@ -52,25 +49,20 @@
                     <tr>
                         {{-- 日付と曜日 --}}
                         <td>{{ $date->format('m/d') }}({{ $date->isoFormat('ddd') }})</td>
-
                         @if($attendance)
-                            {{-- データがある場合 --}}
                             <td>{{ \Carbon\Carbon::parse($attendance->check_in)->format('H:i') }}</td>
                             <td>{{ $attendance->check_out ? \Carbon\Carbon::parse($attendance->check_out)->format('H:i') : '' }}</td>
                             <td>{{ $attendance->total_rest_time }}</td>
                             <td>{{ $attendance->total_work_time }}</td>
                             <td>
-                                {{-- 既存データのIDを渡す --}}
                                 <a href="{{ route('user.attendance.show', ['id' => $attendance->id]) }}" class="detail-link">詳細</a>
                             </td>
                         @else
-                            {{-- データがない日は空欄 --}}
                             <td></td>
                             <td></td>
                             <td></td>
                             <td></td>
                             <td>
-                                {{-- 記録がない日は、日付パラメータを渡して「新規申請」扱いにさせる --}}
                                 <a href="{{ route('user.attendance.show') }}?date={{ $date->format('Y-m-d') }}" class="detail-link">詳細</a>
                             </td>
                         @endif

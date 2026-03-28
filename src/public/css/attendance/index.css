@@ -11,10 +11,8 @@
     margin-bottom: 30px;
     padding-left: 10px;
     border-left: 6px solid #000;
-    /* タイトル横の黒い棒 */
 }
 
-/* 月選択ナビゲーション */
 .month-nav {
     display: flex;
     justify-content: space-between;
@@ -23,7 +21,6 @@
     margin: 20px 0;
     padding: 15px;
     background-color: #fff;
-    /* 画像のように背景を白くする場合 */
     border-radius: 8px;
 }
 
@@ -57,11 +54,9 @@
     width: 100%;
     height: 100%;
     opacity: 0;
-    /* 透明にする */
     cursor: pointer;
 }
 
-/* カレンダー入力のアイコンを非表示にする（Chrome/Edge等） */
 .month-hidden-input::-webkit-calendar-picker-indicator {
     position: absolute;
     width: 100%;
@@ -74,7 +69,6 @@
     font-weight: bold;
 }
 
-/* テーブルデザイン */
 .table-wrapper {
     background: #fff;
     border-radius: 8px;
@@ -96,7 +90,7 @@
     color: #888;
 }
 
-.request-table td {
+.attendance-table td {
     padding: 15px;
     border-bottom: 1px solid #eee;
     color: #888;
@@ -109,7 +103,6 @@
     font-weight: bold;
 }
 
-/* 詳細リンク */
 .detail-link {
     color: #000;
     text-decoration: none;

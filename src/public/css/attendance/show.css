@@ -46,10 +46,8 @@
 .name-display {
     margin-left: 10px;
     letter-spacing: 0.2em;
-    /* 文字同士の間隔を広げる */
 }
 
-/* 日付の表示 */
 .date-display {
     display: flex;
     align-items: center;
@@ -57,7 +55,6 @@
     margin: 0 20px;
 }
 
-/* 入力エリア */
 .input-group {
     width: 100%;
     display: flex;
@@ -90,7 +87,6 @@ textarea {
     font-weight: bold;
 }
 
-/* ボタン */
 .form-actions {
     margin-top: 30px;
     display: flex;
@@ -119,7 +115,6 @@ textarea {
     margin-right: 18px;
 }
 
-/* エラーメッセージ */
 .error-message {
     color: #ff0000;
     font-size: 14px;
