@@ -60,15 +60,15 @@ https://mailtrap.io/
 
 
 ## テストアカウント
-name: 山田太郎
-email: yamada@example.com
-password: password789
-role: user
+name: 山田太郎<br>
+email: yamada@example.com<br>
+password: password789<br>
+role: user<br>
 -------------------------
-name:佐藤花子
-email: sato@example.com
-password: password789
-role: admin
+name:佐藤花子<br>
+email: sato@example.com<br>
+password: password789<br>
+role: admin<br>
 -------------------------
 
 ## PHPUnitを利用したテストに関して
